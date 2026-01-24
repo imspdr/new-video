@@ -4,6 +4,7 @@ import os
 import time
 import re
 import firebase_admin
+from datetime import datetime, timedelta
 from firebase_admin import credentials, firestore
 
 def contains_korean(text):
@@ -24,16 +25,21 @@ def get_api_key():
         print(f"Error: Config file not found at {config_path}")
         return None
 
-def fetch_data(api_key, endpoint, language="ko-KR"):
+def fetch_data(api_key, endpoint, params=None):
+    if params is None:
+        params = {}
     base_url = "https://api.themoviedb.org/3"
     url = f"{base_url}{endpoint}"
-    params = {
+    
+    default_params = {
         "api_key": api_key,
-        "language": language,
+        "language": "ko-KR",
         "page": 1
     }
+    default_params.update(params)
+    
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=default_params)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -44,12 +50,12 @@ def fetch_video(api_key, media_type, media_id):
     endpoint = f"/{media_type}/{media_id}/videos"
     
     # Try fetching with Korean language preference first
-    data = fetch_data(api_key, endpoint, language="ko-KR")
+    data = fetch_data(api_key, endpoint, params={"language": "ko-KR"})
     results = data.get('results', []) if data else []
     
     # If no results in Korean, try English
     if not results:
-         data = fetch_data(api_key, endpoint, language="en-US")
+         data = fetch_data(api_key, endpoint, params={"language": "en-US"})
          results = data.get('results', []) if data else []
 
     if not results:
@@ -132,52 +138,84 @@ def main():
     print("Fetching data from TMDB (Korean Locale)...")
 
     image_base_url = "https://image.tmdb.org/t/p/w500"
-
-    # Fetch newly released movies (Now Playing)
-    movies_data = fetch_data(api_key, "/movie/now_playing", language="ko-KR")
-    movies_list = []
-    if movies_data and 'results' in movies_data:
-        print(f"Found {len(movies_data['results'])} movies. Processing details...")
-        for item in movies_data['results']:
-            if not contains_korean(item.get('title')) or not contains_korean(item.get('overview')):
-                continue
-
-            video_url = fetch_video(api_key, "movie", item['id'])
-            poster_url = f"{image_base_url}{item['poster_path']}" if item.get('poster_path') else None
-            
-            movies_list.append({
-                'id': item['id'],
-                'title': item['title'],
-                'release_date': item['release_date'],
-                'overview': item['overview'],
-                'type': 'movie',
-                'poster_url': poster_url,
-                'youtube_url': video_url
-            })
-            # Be nice to the API rate limit if necessary, though TMDB is generous.
-            # time.sleep(0.1) 
     
-    # Fetch OTT series (On The Air)
-    series_data = fetch_data(api_key, "/tv/on_the_air", language="ko-KR")
+    # Calculate date range for "Recent" releases (e.g., last 2 months)
+    today = datetime.now()
+    two_months_ago = today - timedelta(days=60)
+    
+    date_gte = two_months_ago.strftime('%Y-%m-%d')
+    date_lte = today.strftime('%Y-%m-%d')
+
+    print(f"Fetching content available in Korea (Theaters & OTT)...")
+
+    # Fetch movies in theaters in Korea (Now Playing)
+    movie_params = {
+        "region": "KR",
+        "language": "ko-KR"
+    }
+    
+    movies_list = []
+    print("Fetching up to 100 movies from theaters...")
+    
+    for page in range(1, 6):
+        movie_params["page"] = page
+        movies_data = fetch_data(api_key, "/movie/now_playing", params=movie_params)
+        
+        if movies_data and 'results' in movies_data:
+            print(f"  Processing Movie Page {page}/5 (Found {len(movies_data['results'])} items)...")
+            for item in movies_data['results']:
+                # Optional: Filter out items with no overview
+                # if not item.get('overview'): continue
+                
+                video_url = fetch_video(api_key, "movie", item['id'])
+                poster_url = f"{image_base_url}{item['poster_path']}" if item.get('poster_path') else None
+                
+                movies_list.append({
+                    'id': item['id'],
+                    'title': item['title'],
+                    'release_date': item.get('release_date', 'N/A'),
+                    'overview': item['overview'],
+                    'type': 'movie',
+                    'poster_url': poster_url,
+                    'youtube_url': video_url
+                })
+                time.sleep(0.05) # Rate limiting
+
+    
+    # Fetch TV Series available on OTT in Korea (newly released)
+    # using discover with watch_region and monetization types
+    tv_params = {
+        "watch_region": "KR",
+        "with_watch_monetization_types": "flatrate", # Stream/Subscription
+        "first_air_date.gte": date_gte,
+        "first_air_date.lte": date_lte,
+        "sort_by": "popularity.desc",
+        "language": "ko-KR"
+    }
+
     series_list = []
-    if series_data and 'results' in series_data:
-        print(f"Found {len(series_data['results'])} series. Processing details...")
-        for item in series_data['results']:
-             if not contains_korean(item.get('name')) or not contains_korean(item.get('overview')):
-                continue
+    print("Fetching up to 100 OTT series in Korea...")
 
-             video_url = fetch_video(api_key, "tv", item['id'])
-             poster_url = f"{image_base_url}{item['poster_path']}" if item.get('poster_path') else None
+    for page in range(1, 6):
+        tv_params["page"] = page
+        series_data = fetch_data(api_key, "/discover/tv", params=tv_params)
+        
+        if series_data and 'results' in series_data:
+            print(f"  Processing Series Page {page}/5 (Found {len(series_data['results'])} items)...")
+            for item in series_data['results']:
+                 video_url = fetch_video(api_key, "tv", item['id'])
+                 poster_url = f"{image_base_url}{item['poster_path']}" if item.get('poster_path') else None
 
-             series_list.append({
-                'id': item['id'],
-                'name': item['name'],
-                'first_air_date': item.get('first_air_date', 'N/A'),
-                'overview': item['overview'],
-                'type': 'tv_series',
-                'poster_url': poster_url,
-                'youtube_url': video_url
-            })
+                 series_list.append({
+                    'id': item['id'],
+                    'name': item['name'],
+                    'first_air_date': item.get('first_air_date', 'N/A'),
+                    'overview': item['overview'],
+                    'type': 'tv_series',
+                    'poster_url': poster_url,
+                    'youtube_url': video_url
+                })
+                 time.sleep(0.05) # Rate limiting
 
     # Combine and save
     all_data = {
