@@ -24,14 +24,15 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r crawl/requirements.txt
-
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/crawl" >> $GITHUB_ENV
+          pip install requests firebase-admin
+          # If you have a requirements.txt, use that instead, but verify it has firebase-admin
+          # pip install -r crawl/requirements.txt
 
       - name: Create Service Account Key
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' > crawl/serviceAccountKey.json
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' > data_collector/serviceAccountKey.json
 
-      - name: Run python crawler
-        run: python crawl/crawler.py
+      - name: Run python collector
+        env:
+          TMDB_KEY: ${{ secrets.TMDB_KEY }}
+        run: python data_collector/collector.py
 

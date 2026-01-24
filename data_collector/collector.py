@@ -12,6 +12,10 @@ def contains_korean(text):
     return bool(re.search('[가-힣]', text))
 
 def get_api_key():
+    # Check environment variable first (for GitHub Actions)
+    if os.environ.get('TMDB_KEY'):
+        return os.environ.get('TMDB_KEY')
+        
     config_path = os.path.join(os.path.dirname(__file__), 'tmdb_config')
     try:
         with open(config_path, 'r') as f:
