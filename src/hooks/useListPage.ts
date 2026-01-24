@@ -9,9 +9,13 @@ export interface VideoItem {
   poster_url: string | null;
   youtube_url: string | null;
   type: 'movie' | 'tv_series';
+  vote_average: number;
 }
 
-export const useListPage = () => {
+export type ContentFilter = 'all' | 'movie' | 'tv_series';
+export type SortOption = 'date' | 'rate';
+
+export const useListPage = (filter: ContentFilter = 'all', sort: SortOption = 'date') => {
   const { data, isLoading, error } = useNewReleases();
 
   const items: VideoItem[] = useMemo(() => {
@@ -23,7 +27,8 @@ export const useListPage = () => {
       unified_date: m.release_date,
       poster_url: m.poster_url,
       youtube_url: m.youtube_url,
-      type: 'movie' as const
+      type: 'movie' as const,
+      vote_average: m.vote_average
     }));
 
     const series = data.series.map(s => ({
@@ -32,18 +37,36 @@ export const useListPage = () => {
       unified_date: s.first_air_date,
       poster_url: s.poster_url,
       youtube_url: s.youtube_url,
-      type: 'tv_series' as const
+      type: 'tv_series' as const,
+      vote_average: s.vote_average
     }));
 
-    return [...movies, ...series].sort((a, b) => {
+    return [...movies, ...series];
+  }, [data]);
+
+  const filteredAndSortedItems = useMemo(() => {
+    let result = items;
+
+    // Filter
+    if (filter !== 'all') {
+      result = result.filter(item => item.type === filter);
+    }
+
+    // Sort
+    return result.sort((a, b) => {
+      if (sort === 'rate') {
+        return b.vote_average - a.vote_average;
+      }
+      // Default: date descending
       const dateA = new Date(a.unified_date || 0).getTime();
       const dateB = new Date(b.unified_date || 0).getTime();
       return dateB - dateA;
     });
-  }, [data]);
+  }, [items, filter, sort]);
 
   return {
-    items,
+    items: filteredAndSortedItems,
+    allCount: items.length,
     isLoading,
     error
   };

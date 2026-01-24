@@ -9,6 +9,7 @@ export interface Movie {
   release_date: string;
   overview: string;
   type: 'movie';
+  vote_average: number;
   poster_url: string | null;
   youtube_url: string | null;
 }
@@ -19,6 +20,7 @@ export interface TVSeries {
   first_air_date: string;
   overview: string;
   type: 'tv_series';
+  vote_average: number;
   poster_url: string | null;
   youtube_url: string | null;
 }

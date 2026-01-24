@@ -1,7 +1,7 @@
 
 import { FC } from 'react';
 import { Typography } from '@imspdr/ui';
-import { CardContainer, PosterImage, CardContent, DateText, TypeTag } from './styled';
+import { CardContainer, PosterImage, CardContent, DateText, TypeTag, RatingTag } from './styled';
 
 interface VideoCardProps {
   id: number;
@@ -10,9 +10,10 @@ interface VideoCardProps {
   posterUrl: string | null;
   youtubeUrl: string | null;
   type: 'movie' | 'tv_series';
+  rating?: number;
 }
 
-const VideoCard: FC<VideoCardProps> = ({ id, title, date, posterUrl, youtubeUrl, type }) => {
+const VideoCard: FC<VideoCardProps> = ({ id, title, date, posterUrl, youtubeUrl, type, rating }) => {
   const handleCardClick = () => {
     if (youtubeUrl) {
       window.open(youtubeUrl, '_blank');
@@ -24,6 +25,11 @@ const VideoCard: FC<VideoCardProps> = ({ id, title, date, posterUrl, youtubeUrl,
       <TypeTag type={type}>
         {type === 'movie' ? '영화' : '시리즈'}
       </TypeTag>
+      {rating && (
+        <RatingTag>
+          ★ {rating.toFixed(1)}
+        </RatingTag>
+      )}
       <PosterImage
         src={posterUrl || 'https://via.placeholder.com/500x750?text=No+Poster'}
         alt={title}
