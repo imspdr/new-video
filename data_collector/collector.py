@@ -164,11 +164,23 @@ def main():
         if movies_data and 'results' in movies_data:
             print(f"  Processing Movie Page {page}/5 (Found {len(movies_data['results'])} items)...")
             for item in movies_data['results']:
-                # Optional: Filter out items with no overview
-                # if not item.get('overview'): continue
-                
+                # STRICT FILTERS:
+                # 1. Must have Korean title
+                if not contains_korean(item.get('title')):
+                    continue
+                # 2. Must have Korean overview (description)
+                if not contains_korean(item.get('overview')):
+                    continue
+                # 3. Must have a poster image
+                if not item.get('poster_path'):
+                    continue
+
                 video_url = fetch_video(api_key, "movie", item['id'])
-                poster_url = f"{image_base_url}{item['poster_path']}" if item.get('poster_path') else None
+                # 4. Must have a valid YouTube URL (Trailer/Teaser)
+                if not video_url:
+                    continue
+                
+                poster_url = f"{image_base_url}{item['poster_path']}"
                 
                 movies_list.append({
                     'id': item['id'],
@@ -203,8 +215,23 @@ def main():
         if series_data and 'results' in series_data:
             print(f"  Processing Series Page {page}/5 (Found {len(series_data['results'])} items)...")
             for item in series_data['results']:
+                 # STRICT FILTERS:
+                 # 1. Must have Korean name
+                 if not contains_korean(item.get('name')):
+                    continue
+                 # 2. Must have Korean overview
+                 if not contains_korean(item.get('overview')):
+                    continue
+                 # 3. Must have poster
+                 if not item.get('poster_path'):
+                    continue
+
                  video_url = fetch_video(api_key, "tv", item['id'])
-                 poster_url = f"{image_base_url}{item['poster_path']}" if item.get('poster_path') else None
+                 # 4. Must have valid YouTube URL
+                 if not video_url:
+                    continue
+
+                 poster_url = f"{image_base_url}{item['poster_path']}"
 
                  series_list.append({
                     'id': item['id'],

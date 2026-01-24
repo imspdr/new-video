@@ -1,19 +1,16 @@
 import { FC } from 'react';
-import { useNewReleases } from '../../hooks/useNewReleases';
+import { useListPage } from '../../hooks/useListPage';
 import { Typography } from '@imspdr/ui';
+import VideoCard from '../../components/VideoCard';
 import {
   Container,
   Section,
   SectionHeader,
-  Grid,
-  Card,
-  PosterImage,
-  CardContent,
-  DateText
+  Grid
 } from './styled';
 
 const ListPage: FC = () => {
-  const { data, isLoading, error } = useNewReleases();
+  const { items, isLoading, error } = useListPage();
 
   if (isLoading) {
     return (
@@ -31,65 +28,26 @@ const ListPage: FC = () => {
     );
   }
 
-  const handleCardClick = (url: string | null) => {
-    if (url) {
-      window.open(url, '_blank');
-    }
-  };
-
   return (
     <Container>
       <Section>
         <SectionHeader>
-          <Typography variant="title" level={1}>최신 영화</Typography>
+          <Typography variant="title" level={1}>최신작</Typography>
         </SectionHeader>
         <Grid>
-          {data?.movies.map((movie) => (
-            <Card key={movie.id} onClick={() => handleCardClick(movie.youtube_url)}>
-              <PosterImage
-                src={movie.poster_url || 'https://via.placeholder.com/500x750?text=No+Poster'}
-                alt={movie.title}
-                loading="lazy"
-              />
-              <CardContent>
-                <Typography variant="body" level={1} weight="medium">
-                  {movie.title}
-                </Typography>
-                <DateText>{movie.release_date}</DateText>
-                {/* <Typography variant="caption" level={1} color="fg2" style={{lineClamp: 2}}>
-                  {movie.overview}
-                </Typography> */}
-              </CardContent>
-            </Card>
+          {items.map((item) => (
+            <VideoCard
+              key={`${item.type}-${item.id}`}
+              id={item.id}
+              title={item.display_title}
+              date={item.unified_date}
+              posterUrl={item.poster_url}
+              youtubeUrl={item.youtube_url}
+              type={item.type}
+            />
           ))}
-          {data?.movies.length === 0 && (
-            <Typography variant="body" level={1}>표시할 영화가 없습니다.</Typography>
-          )}
-        </Grid>
-      </Section>
-
-      <Section>
-        <SectionHeader>
-          <Typography variant="title" level={1}>최신 OTT 시리즈</Typography>
-        </SectionHeader>
-        <Grid>
-          {data?.series.map((series) => (
-            <Card key={series.id} onClick={() => handleCardClick(series.youtube_url)}>
-              <PosterImage
-                src={series.poster_url || 'https://via.placeholder.com/500x750?text=No+Poster'}
-                alt={series.name}
-                loading="lazy"
-              />
-              <CardContent>
-                <Typography variant="body" level={1} weight="medium">
-                  {series.name}
-                </Typography>
-                <DateText>{series.first_air_date}</DateText>
-              </CardContent>
-            </Card>
-          ))}
-          {data?.series.length === 0 && (
-            <Typography variant="body" level={1}>표시할 시리즈가 없습니다.</Typography>
+          {items.length === 0 && (
+            <Typography variant="body" level={1}>표시할 컨텐츠가 없습니다.</Typography>
           )}
         </Grid>
       </Section>
