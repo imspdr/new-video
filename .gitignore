@@ -1,0 +1,10 @@
+__pycache__/
+.idea
+.venv
+venv
+.vscode
+dist
+!.gitkeep
+node_modules/
+/docs
+**/serviceAccountKey.json
