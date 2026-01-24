@@ -3,6 +3,8 @@ import json
 import os
 import time
 import re
+import firebase_admin
+from firebase_admin import credentials, storage
 
 def contains_korean(text):
     if not text:
@@ -86,6 +88,44 @@ def fetch_video(api_key, media_type, media_id):
     # Construct URL
     return f"https://www.youtube.com/watch?v={best_video['key']}"
 
+def upload_to_firebase(file_path):
+    print("Uploading data to Firebase Storage...")
+    try:
+        # Path to service account key
+        cred_path = os.path.join(os.path.dirname(__file__), 'serviceAccountKey.json')
+        
+        if not os.path.exists(cred_path):
+            print(f"Error: serviceAccountKey.json not found at {cred_path}")
+            return None
+
+        cred = credentials.Certificate(cred_path)
+        
+        # Initialize the app with a unique name to avoid errors if called multiple times in same process
+        # or check if already initialized.
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(cred, {
+                'storageBucket': 'new-video-71a5e.firebasestorage.app'
+            })
+        
+        bucket = storage.bucket()
+        blob = bucket.blob('new_releases.json')
+        blob.upload_from_filename(file_path)
+        
+        # Make the blob publicly accessible (optional, depends on security requirements)
+        # Note: This requires the service account to have appropriate permissions.
+        blob.make_public()
+        
+        # Construct the "download URL" which is often more reliable for frontend fetching than public_url
+        # strict public_url is https://storage.googleapis.com/...
+        # firebase storage download url (token-less if public) format:
+        public_url = blob.public_url
+        print(f"Successfully uploaded. Public URL: {public_url}")
+        return public_url
+
+    except Exception as e:
+        print(f"Error uploading to Firebase: {e}")
+        return None
+
 def main():
     api_key = get_api_key()
     if not api_key:
@@ -155,6 +195,10 @@ def main():
         print(f"Collected {len(movies_list)} movies and {len(series_list)} series.")
     except IOError as e:
         print(f"Error saving data to file: {e}")
+        return
+
+    # Call upload
+    upload_to_firebase(output_file)
 
 if __name__ == "__main__":
     main()

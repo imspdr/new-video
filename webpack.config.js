@@ -62,7 +62,7 @@ module.exports = (env, argv) => {
       new Dotenv(),
     ],
     devServer: {
-      port: 3200,
+      port: 3400,
       hot: true,
       historyApiFallback: true,
       static: {

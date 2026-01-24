@@ -8,3 +8,4 @@ dist
 node_modules/
 /docs
 **/serviceAccountKey.json
+data_collector/serviceAccountKey.json
