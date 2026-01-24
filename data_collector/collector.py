@@ -4,7 +4,7 @@ import os
 import time
 import re
 import firebase_admin
-from firebase_admin import credentials, storage
+from firebase_admin import credentials, firestore
 
 def contains_korean(text):
     if not text:
@@ -92,43 +92,37 @@ def fetch_video(api_key, media_type, media_id):
     # Construct URL
     return f"https://www.youtube.com/watch?v={best_video['key']}"
 
-def upload_to_firebase(file_path):
-    print("Uploading data to Firebase Storage...")
+def save_to_firestore(data):
+    print("Saving data to Firestore...")
     try:
         # Path to service account key
         cred_path = os.path.join(os.path.dirname(__file__), 'serviceAccountKey.json')
         
         if not os.path.exists(cred_path):
             print(f"Error: serviceAccountKey.json not found at {cred_path}")
-            return None
+            return False
 
         cred = credentials.Certificate(cred_path)
         
-        # Initialize the app with a unique name to avoid errors if called multiple times in same process
-        # or check if already initialized.
         if not firebase_admin._apps:
-            firebase_admin.initialize_app(cred, {
-                'storageBucket': 'new-video-71a5e.firebasestorage.app'
-            })
+            firebase_admin.initialize_app(cred)
         
-        bucket = storage.bucket()
-        blob = bucket.blob('new_releases.json')
-        blob.upload_from_filename(file_path)
+        db = firestore.client()
         
-        # Make the blob publicly accessible (optional, depends on security requirements)
-        # Note: This requires the service account to have appropriate permissions.
-        blob.make_public()
-        
-        # Construct the "download URL" which is often more reliable for frontend fetching than public_url
-        # strict public_url is https://storage.googleapis.com/...
-        # firebase storage download url (token-less if public) format:
-        public_url = blob.public_url
-        print(f"Successfully uploaded. Public URL: {public_url}")
-        return public_url
+        # Save movies list to a single document
+        movies = data.get('movies', [])
+        db.collection('new_releases').document('movies').set({'items': movies})
+
+        # Save series list to a single document
+        series = data.get('series', [])
+        db.collection('new_releases').document('tv_series').set({'items': series})
+            
+        print(f"Successfully saved {len(movies)} movies and {len(series)} series to Firestore (new_releases collection).")
+        return True
 
     except Exception as e:
-        print(f"Error uploading to Firebase: {e}")
-        return None
+        print(f"Error saving to Firestore: {e}")
+        return False
 
 def main():
     api_key = get_api_key()
@@ -191,18 +185,18 @@ def main():
         'series': series_list
     }
     
-    output_file = os.path.join(os.path.dirname(__file__), 'new_releases.json')
-    try:
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(all_data, f, indent=4, ensure_ascii=False)
-        print(f"Successfully saved data to {output_file}")
-        print(f"Collected {len(movies_list)} movies and {len(series_list)} series.")
-    except IOError as e:
-        print(f"Error saving data to file: {e}")
-        return
+    # output_file = os.path.join(os.path.dirname(__file__), 'new_releases.json')
+    # try:
+    #     with open(output_file, 'w', encoding='utf-8') as f:
+    #         json.dump(all_data, f, indent=4, ensure_ascii=False)
+    #     print(f"Successfully saved data to {output_file}")
+    #     print(f"Collected {len(movies_list)} movies and {len(series_list)} series.")
+    # except IOError as e:
+    #     print(f"Error saving data to file: {e}")
+    #     return
 
     # Call upload
-    upload_to_firebase(output_file)
+    save_to_firestore(all_data)
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export interface Movie {
   id: number;
@@ -27,14 +28,25 @@ export interface NewReleasesData {
   series: TVSeries[];
 }
 
-const STORAGE_URL = "https://firebasestorage.googleapis.com/v0/b/new-video-71a5e.firebasestorage.app/o/new_releases.json?alt=media";
+const fetchList = async (docId: string) => {
+  const docRef = doc(db, 'new_releases', docId);
+  const snapshot = await getDoc(docRef);
+  return snapshot.exists() ? (snapshot.data().items as any[]) : [];
+};
 
 export const useNewReleases = () => {
   return useQuery<NewReleasesData>({
     queryKey: ['newReleases'],
     queryFn: async () => {
-      const response = await axios.get(STORAGE_URL);
-      return response.data;
+      const [movies, series] = await Promise.all([
+        fetchList('movies'),
+        fetchList('tv_series')
+      ]);
+
+      return {
+        movies: movies as Movie[],
+        series: series as TVSeries[]
+      };
     },
     staleTime: 1000 * 60 * 60, // 1 hour
   });
