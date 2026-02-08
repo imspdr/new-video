@@ -77,26 +77,25 @@ export const InfoSection = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 2rem 1rem 1rem 1rem;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40%, rgba(0, 0, 0, 0.95));
+  padding: 3rem 1rem 1rem 1rem; /* More top padding for gradient */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
   color: #fff;
   z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  pointer-events: none; /* Let clicks pass to container */
+  pointer-events: none;
 `;
 
 export const TitleText = styled.div`
   font-weight: 600;
-  font-size: 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  line-height: 1.2;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  font-size: 0.95rem;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  word-break: keep-all; /* Better for Korean word wrapping */
+  overflow-wrap: break-word;
+  display: block;
+  width: 100%;
 `;
 
 export const DateText = styled.span`
