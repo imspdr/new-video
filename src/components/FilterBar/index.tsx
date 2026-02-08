@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ContentFilter, SortOption } from "../../hooks/useListPage";
+import { ContentFilter } from "../../hooks/useListPage";
 import { Container, Button } from "./styled";
 
 interface FilterBarProps {

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 export const LayoutContainer = styled.div`
   display: flex;
@@ -6,13 +6,11 @@ export const LayoutContainer = styled.div`
   overflow: hidden;
 `;
 
-
 export const MainContent = styled.main`
   flex: 1;
   height: calc(100vh - 60px);
   overflow-y: auto;
   margin-top: 60px;
   background-color: var(--imspdr-background-bg2);
-  transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
 `;
