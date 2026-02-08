@@ -1,6 +1,17 @@
 import { FC } from "react";
-import { Typography } from "@imspdr/ui";
-import { CardContainer, PosterImage, CardContent, DateText, TypeTag, RatingTag } from "./styled";
+import YouTube from "react-youtube";
+import {
+  CardContainer,
+  MediaSection,
+  PosterImage,
+  VideoWrapper,
+  InfoSection,
+  DateText,
+  TypeTag,
+  TitleText,
+  ActionButton
+} from "./styled";
+import { useVideoCard } from "./useVideoCard";
 
 interface VideoCardProps {
   id: number;
@@ -9,29 +20,79 @@ interface VideoCardProps {
   posterUrl: string | null;
   youtubeUrl: string | null;
   type: "movie" | "tv_series";
+  colIndex?: number;
+  totalCols?: number;
 }
 
-const VideoCard: FC<VideoCardProps> = ({ id, title, date, posterUrl, youtubeUrl, type }) => {
-  const handleCardClick = () => {
-    if (youtubeUrl) {
-      window.open(youtubeUrl, "_blank");
-    }
-  };
+const VideoCard: FC<VideoCardProps> = ({
+  id,
+  title,
+  date,
+  posterUrl,
+  youtubeUrl,
+  type,
+  colIndex = 0,
+  totalCols = 1
+}) => {
+  const {
+    isExpanded,
+    videoId,
+    toggleExpansion,
+    handleOpenLink,
+    onPlayerReady,
+  } = useVideoCard({ youtubeUrl });
 
   return (
-    <CardContainer onClick={handleCardClick}>
+    <CardContainer
+      isExpanded={isExpanded}
+      colIndex={colIndex}
+      totalCols={totalCols}
+      onClick={toggleExpansion}
+    >
       <TypeTag type={type}>{type === "movie" ? "영화" : "시리즈"}</TypeTag>
-      <PosterImage
-        src={posterUrl || "https://via.placeholder.com/500x750?text=No+Poster"}
-        alt={title}
-        loading="lazy"
-      />
-      <CardContent>
-        <Typography variant="body" level={1} weight="medium">
-          {title}
-        </Typography>
-        <DateText>{date}</DateText>
-      </CardContent>
+
+      <MediaSection>
+        <PosterImage
+          isVisible={!isExpanded}
+          src={posterUrl || "https://via.placeholder.com/500x750?text=No+Poster"}
+          alt={title}
+          loading="lazy"
+        />
+
+        {isExpanded && videoId && (
+          <VideoWrapper isVisible={isExpanded}>
+            <YouTube
+              videoId={videoId}
+              opts={{
+                height: '100%',
+                width: '100%',
+                playerVars: {
+                  autoplay: 1,
+                  controls: 0,
+                  rel: 0,
+                  mute: 1,
+                  loop: 1,
+                  playlist: videoId,
+                  modestbranding: 1,
+                  disablekb: 1,
+                  iv_load_policy: 3,
+                  fs: 0,
+                  origin: window.location.origin,
+                },
+              }}
+              onReady={onPlayerReady}
+            />
+          </VideoWrapper>
+        )}
+
+        <InfoSection>
+          <TitleText>{title}</TitleText>
+          <DateText>{date}</DateText>
+          {isExpanded && (
+            <ActionButton onClick={handleOpenLink}>상세 정보 및 재생</ActionButton>
+          )}
+        </InfoSection>
+      </MediaSection>
     </CardContainer>
   );
 };

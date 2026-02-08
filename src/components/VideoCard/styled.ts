@@ -1,44 +1,108 @@
 
 import styled from '@emotion/styled';
 
-export const CardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+export const CardContainer = styled.div<{ isExpanded: boolean; colIndex: number; totalCols: number }>`
+  position: relative;
+  width: 100%;
+  height: 100%; /* Height is controlled by CardWrapper in ListPage */
   background: var(--imspdr-background-bg2);
   border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  height: 100%;
   border: 1px solid var(--imspdr-border-border1);
-  position: relative;
+  cursor: pointer;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1;
 
-  @media (hover: hover) {
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
+  ${({ isExpanded, colIndex, totalCols }) => isExpanded && `
+    z-index: 1000;
+    width: 266.66%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    
+    ${colIndex === 0 ? `
+      left: 0;
+    ` : colIndex === totalCols - 1 ? `
+      left: -166.66%;
+    ` : `
+      left: -83.33%;
+    `}
+  `}
+`;
+
+export const MediaSection = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%; /* Fill the fixed-height container */
+  background-color: var(--imspdr-surface-surface1);
+  overflow: hidden;
+`;
+
+export const PosterImage = styled.img<{ isVisible: boolean }>`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+  transition: opacity 0.3s ease;
+`;
+
+export const VideoWrapper = styled.div<{ isVisible: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: #000;
+  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+
+  iframe {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    transform: scale(1.4); 
+    transform-origin: center;
   }
 `;
 
-export const PosterImage = styled.img`
+export const InfoSection = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  aspect-ratio: 2/3;
-  object-fit: cover;
-  background-color: var(--imspdr-surface-surface1);
-`;
-
-export const CardContent = styled.div`
-  padding: 1rem;
+  padding: 2rem 1rem 1rem 1rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40%, rgba(0, 0, 0, 0.95));
+  color: #fff;
+  z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  flex: 1;
+  gap: 0.2rem;
+  pointer-events: none; /* Let clicks pass to container */
+`;
+
+export const TitleText = styled.div`
+  font-weight: 600;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 `;
 
 export const DateText = styled.span`
-  font-size: 0.8rem;
-  color: var(--imspdr-foreground-fg2);
+  font-size: 0.75rem;
+  opacity: 0.8;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 `;
 
 export const TypeTag = styled.div<{ type: 'movie' | 'tv_series' }>`
@@ -47,29 +111,30 @@ export const TypeTag = styled.div<{ type: 'movie' | 'tv_series' }>`
   left: 10px;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   font-weight: bold;
   color: #fff;
   background-color: ${({ type }) =>
     type === 'movie' ? 'var(--imspdr-primary-primary1, #e50914)' : 'var(--imspdr-secondary-secondary1, #5646ff)'};
-  z-index: 2;
+  z-index: 12;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 `;
 
-export const RatingTag = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 4px 8px;
+export const ActionButton = styled.button`
+  pointer-events: auto; /* Enable clicks for this button */
+  background: var(--imspdr-mint-mint1);
+  color: var(--imspdr-background-bg1);
+  border: none;
+  padding: 6px 12px;
   border-radius: 4px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: bold;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 2;
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  margin-top: 4px;
+  align-self: flex-start;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.9;
+  }
 `;
