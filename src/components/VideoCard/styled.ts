@@ -63,11 +63,17 @@ export const VideoWrapper = styled.div<{ isVisible: boolean }>`
   transition: opacity 0.5s ease;
   pointer-events: none;
 
-  iframe {
+  .youtube-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .youtube-iframe {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    transform: scale(1.4); 
+    /* Zoom to remove YouTube UI elements and hide any black bars */
+    transform: scale(1.5); 
     transform-origin: center;
   }
 `;

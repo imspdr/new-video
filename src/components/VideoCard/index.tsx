@@ -9,7 +9,7 @@ import {
   DateText,
   TypeTag,
   TitleText,
-  ActionButton
+  ActionButton,
 } from "./styled";
 import { useVideoCard } from "./useVideoCard";
 
@@ -32,15 +32,11 @@ const VideoCard: FC<VideoCardProps> = ({
   youtubeUrl,
   type,
   colIndex = 0,
-  totalCols = 1
+  totalCols = 1,
 }) => {
-  const {
-    isExpanded,
-    videoId,
-    toggleExpansion,
-    handleOpenLink,
-    onPlayerReady,
-  } = useVideoCard({ youtubeUrl });
+  const { isExpanded, videoId, toggleExpansion, handleOpenLink, onPlayerReady } = useVideoCard({
+    youtubeUrl,
+  });
 
   return (
     <CardContainer
@@ -63,9 +59,11 @@ const VideoCard: FC<VideoCardProps> = ({
           <VideoWrapper isVisible={isExpanded}>
             <YouTube
               videoId={videoId}
+              className="youtube-iframe"
+              containerClassName="youtube-container"
               opts={{
-                height: '100%',
-                width: '100%',
+                height: "100%",
+                width: "100%",
                 playerVars: {
                   autoplay: 1,
                   controls: 0,
@@ -88,9 +86,6 @@ const VideoCard: FC<VideoCardProps> = ({
         <InfoSection>
           <TitleText>{title}</TitleText>
           <DateText>{date}</DateText>
-          {isExpanded && (
-            <ActionButton onClick={handleOpenLink}>상세 정보 및 재생</ActionButton>
-          )}
         </InfoSection>
       </MediaSection>
     </CardContainer>
