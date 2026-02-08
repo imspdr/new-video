@@ -2,36 +2,10 @@ import styled from "@emotion/styled";
 
 export const Container = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: flex-start
   align-items: center;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--imspdr-border-border1);
-  flex-wrap: wrap;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    justify-content: flex-start;
-    gap: 0.5rem;
-    padding-bottom: 0.8rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-
-    /* Hide scrollbar for cleaner look */
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-`;
-
-export const Group = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    gap: 0.4rem;
-  }
+  gap: 10px;
 `;
 
 export const Button = styled.button<{ active: boolean }>`
@@ -54,20 +28,9 @@ export const Button = styled.button<{ active: boolean }>`
     opacity: ${({ active }) => (active ? 0.9 : 1)};
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
     flex-shrink: 0;
-  }
-`;
-
-export const Separator = styled.div`
-  width: 1px;
-  height: 20px;
-  background-color: var(--imspdr-border-border1);
-  margin: 0 0.5rem;
-
-  @media (max-width: 768px) {
-    margin: 0 0.2rem;
   }
 `;

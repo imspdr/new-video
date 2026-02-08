@@ -188,7 +188,7 @@ def main():
                     'release_date': item.get('release_date', 'N/A'),
                     'overview': item['overview'],
                     'type': 'movie',
-                    'vote_average': item.get('vote_average', 0),
+
                     'poster_url': poster_url,
                     'youtube_url': video_url
                 })
@@ -240,7 +240,7 @@ def main():
                     'first_air_date': item.get('first_air_date', 'N/A'),
                     'overview': item['overview'],
                     'type': 'tv_series',
-                    'vote_average': item.get('vote_average', 0),
+
                     'poster_url': poster_url,
                     'youtube_url': video_url
                 })

@@ -6,9 +6,8 @@ import FilterBar from "../../components/FilterBar";
 import { Container, Section, Grid } from "./styled";
 
 const ListPage: FC = () => {
-  const [filter, setFilter] = useState<ContentFilter>('all');
-  const [sort, setSort] = useState<SortOption>('date');
-  const { items, isLoading, error } = useListPage(filter, sort);
+  const [filter, setFilter] = useState<ContentFilter>("all");
+  const { items, isLoading, error } = useListPage(filter);
 
   if (isLoading) {
     return (
@@ -33,12 +32,7 @@ const ListPage: FC = () => {
   return (
     <Container>
       <Section>
-        <FilterBar
-          filter={filter}
-          onFilterChange={setFilter}
-          sort={sort}
-          onSortChange={setSort}
-        />
+        <FilterBar filter={filter} onFilterChange={setFilter} />
         <Grid>
           {items.map((item) => (
             <VideoCard
@@ -49,7 +43,6 @@ const ListPage: FC = () => {
               posterUrl={item.poster_url}
               youtubeUrl={item.youtube_url}
               type={item.type}
-              rating={item.vote_average}
             />
           ))}
           {items.length === 0 && (
