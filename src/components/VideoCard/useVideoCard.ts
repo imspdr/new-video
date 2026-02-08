@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { YouTubeProps } from "react-youtube";
 
 interface UseVideoCardProps {
@@ -13,14 +13,32 @@ const extractYouTubeId = (url: string | null) => {
 
 export const useVideoCard = ({ youtubeUrl }: UseVideoCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const videoId = extractYouTubeId(youtubeUrl);
 
-  const toggleExpansion = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (videoId) {
-      setIsExpanded(prev => !prev);
-    }
+  const startHover = useCallback(() => {
+    if (!videoId) return;
+
+    // Disable hover expansion on mobile
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) return;
+
+    // Clear any previous timer
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+
+    // Slight delay to prevent accidental expansion while scrolling
+    hoverTimerRef.current = setTimeout(() => {
+      setIsExpanded(true);
+    }, 400); // 400ms delay for a better user experience
   }, [videoId]);
+
+  const endHover = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+    setIsExpanded(false);
+  }, []);
 
   const handleOpenLink = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -36,10 +54,17 @@ export const useVideoCard = ({ youtubeUrl }: UseVideoCardProps) => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
+
   return {
     isExpanded,
     videoId,
-    toggleExpansion,
+    startHover,
+    endHover,
     handleOpenLink,
     onPlayerReady,
   };

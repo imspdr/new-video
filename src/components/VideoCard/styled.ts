@@ -4,39 +4,46 @@ import styled from '@emotion/styled';
 export const CardContainer = styled.div<{ isExpanded: boolean; colIndex: number; totalCols: number }>`
   position: relative;
   width: 100%;
-  height: 100%; /* Height is controlled by CardWrapper in ListPage */
+  height: 100%;
   background: var(--imspdr-background-bg2);
   border-radius: 12px;
   border: 1px solid var(--imspdr-border-border1);
   cursor: pointer;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              left 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 1;
+  left: 0;
 
   ${({ isExpanded, colIndex, totalCols }) => isExpanded && `
-    z-index: 1000;
-    width: 266.66%;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-    
-    ${colIndex === 0 ? `
-      left: 0;
-    ` : colIndex === totalCols - 1 ? `
-      left: -166.66%;
-    ` : `
-      left: -83.33%;
-    `}
+    @media (min-width: 768px) {
+      z-index: 1000;
+      width: 266.66%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      
+      /* Stable positioning during width expansion */
+      ${colIndex === 0 ? `
+        left: 0;
+      ` : colIndex === totalCols - 1 ? `
+        left: -166.66%;
+      ` : `
+        left: -83.33%;
+      `}
+    }
   `}
 `;
 
-export const MediaSection = styled.div`
+export const MediaSection = styled.div<{ isExpanded: boolean }>`
   position: relative;
   width: 100%;
-  height: 100%; /* Fill the fixed-height container */
+  height: 100%;
   background-color: var(--imspdr-surface-surface1);
   overflow: hidden;
+  /* Aspect ratio will naturally adjust as width increases and height is fixed by Grid */
 `;
 
 export const PosterImage = styled.img<{ isVisible: boolean }>`
@@ -72,8 +79,8 @@ export const VideoWrapper = styled.div<{ isVisible: boolean }>`
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    /* Zoom to remove YouTube UI elements and hide any black bars */
-    transform: scale(1.5); 
+    /* Increased zoom and centered crop to hide 'Share', 'Watch Later' and top bar */
+    transform: scale(1.7); 
     transform-origin: center;
   }
 `;
@@ -83,7 +90,7 @@ export const InfoSection = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 3rem 1rem 1rem 1rem; /* More top padding for gradient */
+  padding: 3rem 1rem 1rem 1rem;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
   color: #fff;
   z-index: 10;
@@ -98,7 +105,7 @@ export const TitleText = styled.div`
   font-size: 0.95rem;
   line-height: 1.3;
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-  word-break: keep-all; /* Better for Korean word wrapping */
+  word-break: keep-all;
   overflow-wrap: break-word;
   display: block;
   width: 100%;
@@ -123,23 +130,4 @@ export const TypeTag = styled.div<{ type: 'movie' | 'tv_series' }>`
     type === 'movie' ? 'var(--imspdr-primary-primary1, #e50914)' : 'var(--imspdr-secondary-secondary1, #5646ff)'};
   z-index: 12;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-`;
-
-export const ActionButton = styled.button`
-  pointer-events: auto; /* Enable clicks for this button */
-  background: var(--imspdr-mint-mint1);
-  color: var(--imspdr-background-bg1);
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 4px;
-  align-self: flex-start;
-  transition: opacity 0.2s ease;
-  
-  &:hover {
-    opacity: 0.9;
-  }
 `;

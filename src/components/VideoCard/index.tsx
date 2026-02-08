@@ -1,5 +1,5 @@
 import { FC } from "react";
-import YouTube from "react-youtube";
+import YouTube, { YouTubeEvent } from "react-youtube";
 import {
   CardContainer,
   MediaSection,
@@ -8,8 +8,7 @@ import {
   InfoSection,
   DateText,
   TypeTag,
-  TitleText,
-  ActionButton,
+  TitleText
 } from "./styled";
 import { useVideoCard } from "./useVideoCard";
 
@@ -32,22 +31,29 @@ const VideoCard: FC<VideoCardProps> = ({
   youtubeUrl,
   type,
   colIndex = 0,
-  totalCols = 1,
+  totalCols = 1
 }) => {
-  const { isExpanded, videoId, toggleExpansion, handleOpenLink, onPlayerReady } = useVideoCard({
-    youtubeUrl,
-  });
+  const {
+    isExpanded,
+    videoId,
+    startHover,
+    endHover,
+    handleOpenLink,
+    onPlayerReady,
+  } = useVideoCard({ youtubeUrl });
 
   return (
     <CardContainer
       isExpanded={isExpanded}
       colIndex={colIndex}
       totalCols={totalCols}
-      onClick={toggleExpansion}
+      onMouseEnter={startHover}
+      onMouseLeave={endHover}
+      onClick={handleOpenLink}
     >
       <TypeTag type={type}>{type === "movie" ? "영화" : "시리즈"}</TypeTag>
 
-      <MediaSection>
+      <MediaSection isExpanded={isExpanded}>
         <PosterImage
           isVisible={!isExpanded}
           src={posterUrl || "https://via.placeholder.com/500x750?text=No+Poster"}
@@ -75,10 +81,21 @@ const VideoCard: FC<VideoCardProps> = ({
                   disablekb: 1,
                   iv_load_policy: 3,
                   fs: 0,
+                  showinfo: 0, // Legacy hint
+                  autohide: 1, // Legacy hint
                   origin: window.location.origin,
+                  vq: 'large', // Suggest 480p
                 },
               }}
-              onReady={onPlayerReady}
+              onReady={(event: YouTubeEvent) => {
+                onPlayerReady(event);
+                // Attempt to set quality directly through the API
+                try {
+                  event.target.setPlaybackQuality('large');
+                } catch (e) {
+                  // Quality settings may be restricted by the player
+                }
+              }}
             />
           </VideoWrapper>
         )}
