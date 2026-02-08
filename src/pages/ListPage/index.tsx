@@ -1,5 +1,6 @@
-import { FC, useState, useEffect, useRef, useMemo } from "react";
+import { FC, useState } from "react";
 import { useListPage, ContentFilter } from "../../hooks/useListPage";
+import { useGridLayout } from "../../hooks/useGridLayout";
 import { Typography } from "@imspdr/ui";
 import VideoCard from "../../components/VideoCard";
 import FilterBar from "../../components/FilterBar";
@@ -8,48 +9,9 @@ import { Container, Section, GridContainer, CardWrapper } from "./styled";
 const ListPage: FC = () => {
   const [filter, setFilter] = useState<ContentFilter>("all");
   const { items, isLoading, error } = useListPage(filter);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
 
-  // Update container width on resize
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [isLoading]);
-
-  // Layout calculations
-  const layout = useMemo(() => {
-    if (containerWidth === 0 || items.length === 0) return { positions: [], totalHeight: 0 };
-
-    const isMobile = window.innerWidth < 768;
-    const minCardWidth = isMobile ? 160 : 220;
-    const columns = Math.max(1, Math.floor(containerWidth / minCardWidth));
-    const cardWidth = containerWidth / columns;
-    const cardHeight = (cardWidth * 1.5); // Poster ratio only, no extra bottom height
-
-    const positions = items.map((_, index) => {
-      const row = Math.floor(index / columns);
-      const col = index % columns;
-      return {
-        top: row * cardHeight,
-        left: col * cardWidth,
-        width: cardWidth,
-        height: cardHeight,
-        colIndex: col,
-        totalCols: columns,
-      };
-    });
-
-    const totalRows = Math.ceil(items.length / columns);
-    return { positions, totalHeight: totalRows * cardHeight };
-  }, [containerWidth, items.length]);
+  // Use the extracted grid layout logic
+  const { containerRef, positions, totalHeight } = useGridLayout(items.length);
 
   if (isLoading) {
     return (
@@ -75,9 +37,9 @@ const ListPage: FC = () => {
     <Container>
       <Section ref={containerRef}>
         <FilterBar filter={filter} onFilterChange={setFilter} />
-        <GridContainer height={layout.totalHeight}>
+        <GridContainer height={totalHeight}>
           {items.map((item, index) => {
-            const pos = (layout.positions as any)[index];
+            const pos = positions[index];
             if (!pos) return null;
 
             return (
@@ -101,12 +63,12 @@ const ListPage: FC = () => {
               </CardWrapper>
             );
           })}
+          {items.length === 0 && !isLoading && (
+            <Typography variant="body" level={1}>
+              표시할 컨텐츠가 없습니다.
+            </Typography>
+          )}
         </GridContainer>
-        {items.length === 0 && (
-          <Typography variant="body" level={1}>
-            표시할 컨텐츠가 없습니다.
-          </Typography>
-        )}
       </Section>
     </Container>
   );
