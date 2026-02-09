@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new ModuleFederationPlugin({
-        name: 'new-video',
+        name: 'newvideo',
         filename: 'remoteEntry.js',
         exposes: {
           './App': './src/App',
