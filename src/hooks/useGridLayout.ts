@@ -25,16 +25,13 @@ export const useGridLayout = (itemCount: number): UseGridLayoutResult => {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
-
     updateWidth();
 
-    // Using ResizeObserver for better precision than window resize alone
-    const observer = new ResizeObserver(updateWidth);
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    window.addEventListener('resize', updateWidth);
 
-    return () => observer.disconnect();
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+    };
   }, []);
 
   const layout = useMemo(() => {
