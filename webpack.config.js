@@ -2,7 +2,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const Dotenv = require('dotenv-webpack');
 const deps = require('./package.json').dependencies;
@@ -38,7 +37,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new ModuleFederationPlugin({
-        name: 'kospi200',
+        name: 'new-video',
         filename: 'remoteEntry.js',
         exposes: {
           './App': './src/App',
@@ -55,7 +54,7 @@ module.exports = (env, argv) => {
         favicon: path.resolve(__dirname, 'imspdr.png'),
       }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "src/404.html"),
+        template: path.resolve(__dirname, "public/404.html"),
         filename: "404.html",
       }),
       new CleanWebpackPlugin(),

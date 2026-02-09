@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ContentFilter } from "../../hooks/useListPage";
+import { ContentFilter } from "../../../../hooks/useListPage";
 import { Button } from "@imspdr/ui";
 import { Container } from "./styled";
 
