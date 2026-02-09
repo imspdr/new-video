@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { ModalProvider, ThemeProvider, ToastProvider } from "@imspdr/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Header from "./components/Header";
@@ -37,16 +37,11 @@ const App: FC = () => {
 };
 
 const AppLayout: FC = () => {
-  const navigate = useNavigate();
-
   return (
     <LayoutContainer>
-      <Header onHomeClick={() => navigate("/list")} />
+      <Header />
       <MainContent>
-        <Routes>
-          <Route path="/list" element={<ListPage />} />
-          <Route path="/" element={<Navigate to="/list" replace />} />
-        </Routes>
+        <ListPage />
       </MainContent>
     </LayoutContainer>
   );

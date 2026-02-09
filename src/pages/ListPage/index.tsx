@@ -13,6 +13,8 @@ const ListPage: FC = () => {
   // Use the extracted grid layout logic
   const { containerRef, positions, totalHeight } = useGridLayout(items.length);
 
+
+
   if (isLoading) {
     return (
       <Container>

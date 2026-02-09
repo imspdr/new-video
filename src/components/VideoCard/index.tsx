@@ -6,10 +6,9 @@ import {
   PosterImage,
   VideoWrapper,
   InfoSection,
-  DateText,
   TypeTag,
-  TitleText
 } from "./styled";
+import { Typography } from "@imspdr/ui";
 import { useVideoCard } from "./useVideoCard";
 
 interface VideoCardProps {
@@ -101,8 +100,12 @@ const VideoCard: FC<VideoCardProps> = ({
         )}
 
         <InfoSection>
-          <TitleText>{title}</TitleText>
-          <DateText>{date}</DateText>
+          <Typography variant="body" level={2} bold color="white">
+            {title}
+          </Typography>
+          <Typography variant="caption" level={1} color="white">
+            {date}
+          </Typography>
         </InfoSection>
       </MediaSection>
     </CardContainer>

@@ -1,27 +1,13 @@
-import { AutoComplete, ThemeToggleButton, Typography } from '@imspdr/ui';
-import { HeaderContainer, RightSection, SearchWrapper, TitleButton, TitleSection } from './styled';
-import { useDeviceType } from '@imspdr/ui';
+import { ThemeToggleButton, Typography } from '@imspdr/ui';
+import { HeaderContainer, RightSection, TitleSection } from './styled';
 
-interface HeaderProps {
-  onHomeClick?: () => void;
-}
-
-const Header = ({ onHomeClick }: HeaderProps) => {
-  const handleHomeClick = () => {
-    if (onHomeClick) {
-      onHomeClick();
-    } else {
-      window.location.href = '/';
-    }
-  };
+const Header = () => {
   return (
     <HeaderContainer>
       <TitleSection>
-        <TitleButton onClick={handleHomeClick}>
-          <Typography variant="title" level={2}>
-            NEW VIDEO
-          </Typography>
-        </TitleButton>
+        <Typography variant="title" level={2}>
+          NEW VIDEO
+        </Typography>
       </TitleSection>
       <RightSection>
         <ThemeToggleButton />

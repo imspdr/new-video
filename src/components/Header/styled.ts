@@ -6,8 +6,8 @@ export const HeaderContainer = styled.header`
   left: 0;
   width: 100%;
   height: 60px;
-  background-color: var(--imspdr-background-bg1);
-  border-bottom: 1px solid var(--imspdr-background-bg3);
+  background-color: var(--imspdr-background-1);
+  border-bottom: 1px solid var(--imspdr-background-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -23,40 +23,7 @@ export const TitleSection = styled.div`
   flex: 1;
 `;
 
-export const TitleButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--imspdr-foreground-fg1);
-  cursor: pointer;
-  padding: 0;
-  font-family: inherit;
-  white-space: nowrap;
 
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-export const SearchWrapper = styled.div`
-  flex: 1;
-  max-width: 400px;
-
-  /* Styling for the nested AutoComplete/SearchInput */
-  & > div {
-    background: var(--imspdr-background-bg2);
-    border: 1px solid var(--imspdr-background-bg3);
-    border-radius: 8px;
-
-    input {
-      background: transparent;
-      &::placeholder {
-        color: var(--imspdr-foreground-fg3);
-      }
-    }
-  }
-`;
 
 export const RightSection = styled.div`
   display: flex;

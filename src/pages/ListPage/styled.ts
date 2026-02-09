@@ -4,11 +4,12 @@ import styled from "@emotion/styled";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 10px 20px;
-  gap: 3rem;
-  min-height: 100vh;
-  background-color: var(--imspdr-background-bg1);
-  color: var(--imspdr-foreground-fg1);
+  padding: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 10px;
+  background-color: var(--imspdr-background-1);
+  color: var(--imspdr-foreground-1);
 `;
 
 export const Section = styled.section`

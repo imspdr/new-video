@@ -5,9 +5,9 @@ export const CardContainer = styled.div<{ isExpanded: boolean; colIndex: number;
   position: relative;
   width: 100%;
   height: 100%;
-  background: var(--imspdr-background-bg2);
+  background: var(--imspdr-background-2);
   border-radius: 12px;
-  border: 1px solid var(--imspdr-border-border1);
+  border: 1px solid var(--imspdr-background-3);
   cursor: pointer;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
               left 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
@@ -41,7 +41,7 @@ export const MediaSection = styled.div<{ isExpanded: boolean }>`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: var(--imspdr-surface-surface1);
+  background-color: var(--imspdr-background-2);
   overflow: hidden;
   /* Aspect ratio will naturally adjust as width increases and height is fixed by Grid */
 `;
@@ -100,22 +100,7 @@ export const InfoSection = styled.div`
   pointer-events: none;
 `;
 
-export const TitleText = styled.div`
-  font-weight: 600;
-  font-size: 0.95rem;
-  line-height: 1.3;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-  word-break: keep-all;
-  overflow-wrap: break-word;
-  display: block;
-  width: 100%;
-`;
 
-export const DateText = styled.span`
-  font-size: 0.75rem;
-  opacity: 0.8;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-`;
 
 export const TypeTag = styled.div<{ type: 'movie' | 'tv_series' }>`
   position: absolute;
@@ -127,7 +112,7 @@ export const TypeTag = styled.div<{ type: 'movie' | 'tv_series' }>`
   font-weight: bold;
   color: #fff;
   background-color: ${({ type }) =>
-    type === 'movie' ? 'var(--imspdr-primary-primary1, #e50914)' : 'var(--imspdr-secondary-secondary1, #5646ff)'};
+    type === 'movie' ? 'var(--imspdr-danger-1)' : 'var(--imspdr-info-1)'};
   z-index: 12;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 `;

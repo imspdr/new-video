@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { ContentFilter } from "../../hooks/useListPage";
-import { Container, Button } from "./styled";
+import { Button } from "@imspdr/ui";
+import { Container } from "./styled";
 
 interface FilterBarProps {
   filter: ContentFilter;
@@ -10,13 +11,31 @@ interface FilterBarProps {
 const FilterBar: FC<FilterBarProps> = ({ filter, onFilterChange }) => {
   return (
     <Container>
-      <Button active={filter === "all"} onClick={() => onFilterChange("all")}>
+      <Button
+        variant={filter === "all" ? "contained" : "outlined"}
+        color="primary.1"
+        onClick={() => onFilterChange("all")}
+        size="sm"
+        shape="rounded"
+      >
         전체
       </Button>
-      <Button active={filter === "movie"} onClick={() => onFilterChange("movie")}>
+      <Button
+        variant={filter === "movie" ? "contained" : "outlined"}
+        color="primary.1"
+        onClick={() => onFilterChange("movie")}
+        size="sm"
+        shape="rounded"
+      >
         영화
       </Button>
-      <Button active={filter === "tv_series"} onClick={() => onFilterChange("tv_series")}>
+      <Button
+        variant={filter === "tv_series" ? "contained" : "outlined"}
+        color="primary.1"
+        onClick={() => onFilterChange("tv_series")}
+        size="sm"
+        shape="rounded"
+      >
         시리즈
       </Button>
     </Container>

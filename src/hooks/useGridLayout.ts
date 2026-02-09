@@ -17,7 +17,7 @@ interface UseGridLayoutResult {
 
 export const useGridLayout = (itemCount: number): UseGridLayoutResult => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   useEffect(() => {
     const updateWidth = () => {
