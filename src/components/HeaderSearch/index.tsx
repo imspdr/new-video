@@ -8,15 +8,15 @@ interface HeaderSearchProps {
 }
 
 const HeaderSearch: FC<HeaderSearchProps> = ({ placeholder = "검색", onChange }) => {
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+  const handleChange = (value: string) => {
+    onChange(value);
   };
 
   return (
     <SearchWrapper>
       <SearchInput
         placeholder={placeholder}
-        onChange={handleChange as any}
+        onChange={handleChange}
       />
     </SearchWrapper>
   );

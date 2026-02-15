@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { useNewReleases } from '../../../hooks/useNewReleases';
+import { useNewReleases } from './useNewReleases';
 
 export interface VideoItem {
   id: number;

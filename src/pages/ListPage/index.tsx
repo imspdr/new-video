@@ -1,9 +1,10 @@
 import { FC, useState } from "react";
 import { useListPage, ContentFilter } from "./hooks/useListPage";
-import { useGridLayout } from "../../hooks/useGridLayout";
+import { useGridLayout } from "./hooks/useGridLayout";
 import { Typography } from "@imspdr/ui";
 import VideoCard from "./components/VideoCard";
 import FilterBar from "./components/FilterBar";
+import EmptyState from "./components/EmptyState";
 import { Container, Section, GridContainer, CardWrapper } from "./styled";
 
 interface ListPageProps {
@@ -22,9 +23,9 @@ const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
   if (isLoading) {
     return (
       <Container>
-        <Typography variant="body" level={1}>
-          로딩 중...
-        </Typography>
+        <Section>
+          <EmptyState type="loading" message="컨텐츠를 불러오는 중입니다..." />
+        </Section>
       </Container>
     );
   }
@@ -32,9 +33,9 @@ const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
   if (error) {
     return (
       <Container>
-        <Typography variant="body" level={1}>
-          데이터를 불러오는 중 오류가 발생했습니다.
-        </Typography>
+        <Section>
+          <EmptyState type="error" message="데이터를 불러오는 중 오류가 발생했습니다." />
+        </Section>
       </Container>
     );
   }
@@ -69,12 +70,8 @@ const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
               </CardWrapper>
             );
           })}
-          {items.length === 0 && !isLoading && (
-            <Typography variant="body" level={1}>
-              표시할 컨텐츠가 없습니다.
-            </Typography>
-          )}
         </GridContainer>
+        {items.length === 0 && !isLoading && <EmptyState />}
       </Section>
     </Container>
   );

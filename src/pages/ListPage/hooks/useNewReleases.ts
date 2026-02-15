@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../../firebase';
 
 export interface Movie {
   id: number;

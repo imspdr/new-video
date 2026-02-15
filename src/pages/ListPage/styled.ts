@@ -8,7 +8,6 @@ export const Container = styled.div`
   width: 100%;
   box-sizing: border-box;
   gap: 10px;
-  background-color: var(--imspdr-background-1);
   color: var(--imspdr-foreground-1);
 `;
 
