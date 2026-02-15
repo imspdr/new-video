@@ -17,12 +17,12 @@ interface UseGridLayoutResult {
 
 export const useGridLayout = (itemCount: number): UseGridLayoutResult => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [containerWidth, setContainerWidth] = useState(typeof window !== 'undefined' ? Math.min(window.innerWidth, 1200) : 1200);
 
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
+        setContainerWidth(Math.min(containerRef.current.offsetWidth, 1200));
       }
     };
     updateWidth();
@@ -35,14 +35,17 @@ export const useGridLayout = (itemCount: number): UseGridLayoutResult => {
   }, []);
 
   const layout = useMemo(() => {
-    if (containerWidth === 0 || itemCount === 0) {
+    // Ensure we never exceed 1200 for calculation even if something slips through
+    const safeWidth = Math.min(containerWidth, 1200);
+
+    if (safeWidth === 0 || itemCount === 0) {
       return { positions: [], totalHeight: 0 };
     }
 
     const isMobile = window.innerWidth < 768;
     const minCardWidth = isMobile ? 160 : 220;
-    const columns = Math.max(1, Math.floor(containerWidth / minCardWidth));
-    const cardWidth = containerWidth / columns;
+    const columns = Math.max(1, Math.floor(safeWidth / minCardWidth));
+    const cardWidth = safeWidth / columns;
     const cardHeight = cardWidth * 1.5;
 
     const positions: GridPosition[] = Array.from({ length: itemCount }, (_, index) => {
