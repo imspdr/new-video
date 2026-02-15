@@ -1,9 +1,10 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { BrowserRouter } from "react-router-dom";
 import { Layout, ModalProvider, ThemeProvider, ToastProvider, Typography } from "@imspdr/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ListPage from "./pages/ListPage";
+import HeaderSearch from "./components/HeaderSearch";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,11 +36,19 @@ const App: FC = () => {
 };
 
 const AppLayout: FC = () => {
+  const [search, setSearch] = useState("");
+
   return (
     <Layout
       title="NEW VIDEO"
+      middleContent={
+        <HeaderSearch
+          placeholder="검색"
+          onChange={setSearch}
+        />
+      }
     >
-      <ListPage />
+      <ListPage searchQuery={search} />
     </Layout>
   );
 };

@@ -1,14 +1,18 @@
 import { FC, useState } from "react";
-import { useListPage, ContentFilter } from "../../hooks/useListPage";
+import { useListPage, ContentFilter } from "./hooks/useListPage";
 import { useGridLayout } from "../../hooks/useGridLayout";
 import { Typography } from "@imspdr/ui";
 import VideoCard from "./components/VideoCard";
 import FilterBar from "./components/FilterBar";
 import { Container, Section, GridContainer, CardWrapper } from "./styled";
 
-const ListPage: FC = () => {
+interface ListPageProps {
+  searchQuery?: string;
+}
+
+const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
   const [filter, setFilter] = useState<ContentFilter>("all");
-  const { items, isLoading, error } = useListPage(filter);
+  const { items, isLoading, error } = useListPage(filter, searchQuery);
 
   // Use the extracted grid layout logic
   const { containerRef, positions, totalHeight } = useGridLayout(items.length);

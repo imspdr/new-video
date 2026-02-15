@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { useNewReleases } from './useNewReleases';
+import { useNewReleases } from '../../../hooks/useNewReleases';
 
 export interface VideoItem {
   id: number;
@@ -13,7 +13,7 @@ export interface VideoItem {
 
 export type ContentFilter = 'all' | 'movie' | 'tv_series';
 
-export const useListPage = (filter: ContentFilter = 'all') => {
+export const useListPage = (filter: ContentFilter = 'all', searchQuery: string = '') => {
   const { data, isLoading, error } = useNewReleases();
 
   const items: VideoItem[] = useMemo(() => {
@@ -48,8 +48,16 @@ export const useListPage = (filter: ContentFilter = 'all') => {
       result = result.filter(item => item.type === filter);
     }
 
+    // Search
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      result = result.filter(item =>
+        item.display_title.toLowerCase().includes(lowerQuery)
+      );
+    }
+
     return result;
-  }, [items, filter]);
+  }, [items, filter, searchQuery]);
 
   return {
     items: filteredAndSortedItems,

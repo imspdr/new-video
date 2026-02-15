@@ -17,7 +17,7 @@ export const Section = styled.section`
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  max-width: 1400px; /* Limit max width for better calculations */
+  max-width: 1200px;
   margin: 0 auto;
 `;
 
