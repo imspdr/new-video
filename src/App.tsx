@@ -1,11 +1,9 @@
 import { FC } from "react";
 
 import { BrowserRouter } from "react-router-dom";
-import { ModalProvider, ThemeProvider, ToastProvider } from "@imspdr/ui";
+import { Layout, ModalProvider, ThemeProvider, ToastProvider, Typography } from "@imspdr/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Header from "./components/Header";
 import ListPage from "./pages/ListPage";
-import { LayoutContainer, MainContent } from "./styled";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,12 +36,11 @@ const App: FC = () => {
 
 const AppLayout: FC = () => {
   return (
-    <LayoutContainer>
-      <Header />
-      <MainContent>
-        <ListPage />
-      </MainContent>
-    </LayoutContainer>
+    <Layout
+      title="NEW VIDEO"
+    >
+      <ListPage />
+    </Layout>
   );
 };
 
