@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
-import { BrowserRouter } from "react-router-dom";
-import { Layout, ModalProvider, ThemeProvider, ToastProvider, Typography } from "@imspdr/ui";
+import { BrowserRouter, useNavigate } from "react-router-dom";
+import { Layout, ModalProvider, ThemeProvider, ToastProvider } from "@imspdr/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ListPage from "./pages/ListPage";
 import HeaderSearch from "./components/HeaderSearch";
@@ -36,11 +36,13 @@ const App: FC = () => {
 };
 
 const AppLayout: FC = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   return (
     <Layout
       title="NEW VIDEO"
+      onHomeClick={() => navigate("/")}
       middleContent={
         <HeaderSearch
           placeholder="검색"
