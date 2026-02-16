@@ -25,7 +25,7 @@ const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
     return (
       <Container>
         <Section>
-          <EmptyState type="loading" message="컨텐츠를 불러오는 중입니다..." />
+          <EmptyState message="컨텐츠를 불러오는 중입니다..." />
         </Section>
       </Container>
     );
@@ -35,7 +35,7 @@ const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
     return (
       <Container>
         <Section>
-          <EmptyState type="error" message="데이터를 불러오는 중 오류가 발생했습니다." />
+          <EmptyState message="데이터를 불러오는 중 오류가 발생했습니다." />
         </Section>
       </Container>
     );
