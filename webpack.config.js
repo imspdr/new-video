@@ -8,9 +8,10 @@ const deps = require('./package.json').dependencies;
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production' || process.env.NODE_ENV === 'production';
+  const isWidgetTest = env && env.widgetTest;
 
   return {
-    entry: './src/index.tsx',
+    entry: isWidgetTest ? './src/test-widgets.tsx' : './src/index.tsx',
     mode: isProduction ? 'production' : 'development',
     output: {
       path: path.resolve(__dirname, 'docs'),
@@ -41,6 +42,7 @@ module.exports = (env, argv) => {
         filename: 'remoteEntry.js',
         exposes: {
           './App': './src/App',
+          './LatestBanner': './src/exports/LatestBanner',
         },
         shared: {
           react: { singleton: true, requiredVersion: deps.react },
