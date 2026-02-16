@@ -19,10 +19,6 @@ export const useVideoCard = ({ youtubeUrl }: UseVideoCardProps) => {
   const startHover = useCallback(() => {
     if (!videoId) return;
 
-    // Disable hover expansion on mobile
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) return;
-
     // Clear any previous timer
     if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
 
@@ -40,12 +36,10 @@ export const useVideoCard = ({ youtubeUrl }: UseVideoCardProps) => {
     setIsExpanded(false);
   }, []);
 
-  const handleOpenLink = useCallback((e: React.MouseEvent) => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (youtubeUrl) {
-      window.open(youtubeUrl, "_blank");
-    }
-  }, [youtubeUrl]);
+    // Link logic removed as per user request
+  }, []);
 
   const onPlayerReady: YouTubeProps['onReady'] = (event) => {
     if (isExpanded) {
@@ -65,7 +59,7 @@ export const useVideoCard = ({ youtubeUrl }: UseVideoCardProps) => {
     videoId,
     startHover,
     endHover,
-    handleOpenLink,
+    handleClick,
     onPlayerReady,
   };
 };

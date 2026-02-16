@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
 import { useListPage, ContentFilter } from "./hooks/useListPage";
 import { useGridLayout } from "./hooks/useGridLayout";
-import { Typography } from "@imspdr/ui";
+import { useDeviceType } from "@imspdr/ui";
 import VideoCard from "./components/VideoCard";
+import MobileVideoCard from "./components/VideoCard/MobileVideoCard";
 import FilterBar from "./components/FilterBar";
 import EmptyState from "./components/EmptyState";
 import { Container, Section, GridContainer, CardWrapper } from "./styled";
@@ -13,12 +14,12 @@ interface ListPageProps {
 
 const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
   const [filter, setFilter] = useState<ContentFilter>("all");
-  const { items, isLoading, error } = useListPage(filter, searchQuery);
+  const { items, isLoading, error, expandedId, setExpandedId } = useListPage(filter, searchQuery);
+  const { isPc } = useDeviceType();
+  const isMobile = !isPc;
 
   // Use the extracted grid layout logic
   const { containerRef, positions, totalHeight } = useGridLayout(items.length);
-
-
 
   if (isLoading) {
     return (
@@ -49,24 +50,42 @@ const ListPage: FC<ListPageProps> = ({ searchQuery = '' }) => {
             const pos = positions[index];
             if (!pos) return null;
 
+            const itemId = `${item.type}-${item.id}`;
+            const isCurrentlyExpanded = expandedId === itemId;
+
             return (
               <CardWrapper
-                key={`${item.type}-${item.id}`}
+                key={itemId}
                 top={pos.top}
                 left={pos.left}
                 width={pos.width}
                 height={pos.height}
+                isExpanded={isCurrentlyExpanded}
               >
-                <VideoCard
-                  id={item.id}
-                  title={item.display_title}
-                  date={item.unified_date}
-                  posterUrl={item.poster_url}
-                  youtubeUrl={item.youtube_url}
-                  type={item.type}
-                  colIndex={pos.colIndex}
-                  totalCols={pos.totalCols}
-                />
+                {isMobile ? (
+                  <MobileVideoCard
+                    id={item.id}
+                    title={item.display_title}
+                    date={item.unified_date}
+                    posterUrl={item.poster_url}
+                    youtubeUrl={item.youtube_url}
+                    type={item.type}
+                    isExpanded={isCurrentlyExpanded}
+                    onToggle={() => setExpandedId(isCurrentlyExpanded ? null : itemId)}
+                    colIndex={pos.colIndex}
+                  />
+                ) : (
+                  <VideoCard
+                    id={item.id}
+                    title={item.display_title}
+                    date={item.unified_date}
+                    posterUrl={item.poster_url}
+                    youtubeUrl={item.youtube_url}
+                    type={item.type}
+                    colIndex={pos.colIndex}
+                    totalCols={pos.totalCols}
+                  />
+                )}
               </CardWrapper>
             );
           })}

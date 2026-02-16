@@ -1,5 +1,4 @@
-
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNewReleases } from './useNewReleases';
 
 export interface VideoItem {
@@ -15,6 +14,7 @@ export type ContentFilter = 'all' | 'movie' | 'tv_series';
 
 export const useListPage = (filter: ContentFilter = 'all', searchQuery: string = '') => {
   const { data, isLoading, error } = useNewReleases();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const items: VideoItem[] = useMemo(() => {
     if (!data) return [];
@@ -63,6 +63,8 @@ export const useListPage = (filter: ContentFilter = 'all', searchQuery: string =
     items: filteredAndSortedItems,
     allCount: items.length,
     isLoading,
-    error
+    error,
+    expandedId,
+    setExpandedId,
   };
 };

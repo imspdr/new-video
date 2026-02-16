@@ -27,13 +27,32 @@ export const GridContainer = styled.div<{ height: number }>`
   transition: height 0.3s ease;
 `;
 
-export const CardWrapper = styled.div<{ top: number; left: number; width: number; height: number }>`
+export const CardWrapper = styled.div<{
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  isExpanded?: boolean;
+}>`
   position: absolute;
   top: ${({ top }) => top}px;
-  left: ${({ left }) => left}px;
-  width: ${({ width }) => width}px;
+  left: ${({ left, isExpanded }) => isExpanded ? 0 : left}px;
+  width: ${({ width, isExpanded }) => isExpanded ? '100%' : width}px;
   height: ${({ height }) => height}px;
-  padding: 10px; /* Gap handling via padding */
+  padding: 10px;
   box-sizing: border-box;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: ${({ isExpanded }) => (isExpanded ? 1000 : 1)};
+  
+  &:hover {
+    z-index: 1000;
+  }
+
+  /* On mobile expansion, we want to ensure it covers the whole row */
+  @media (max-width: 767px) {
+    ${({ isExpanded }) => isExpanded && `
+      left: 0;
+      width: 100%;
+    `}
+  }
 `;

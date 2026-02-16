@@ -9,46 +9,49 @@ import {
   TypeTag,
 } from "./styled";
 import { Typography } from "@imspdr/ui";
-import { useVideoCard } from "./useVideoCard";
 
-interface VideoCardProps {
+interface MobileVideoCardProps {
   id: number;
   title: string;
   date: string;
   posterUrl: string | null;
   youtubeUrl: string | null;
   type: "movie" | "tv_series";
-  colIndex?: number;
-  totalCols?: number;
+  isExpanded: boolean;
+  onToggle: () => void;
+  colIndex: number;
 }
 
-const VideoCard: FC<VideoCardProps> = ({
-  id,
+const extractYouTubeId = (url: string | null) => {
+  if (!url) return null;
+  const match = url.match(/(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|shorts\/)([^&\n?#]+)/);
+  return match ? match[1] : null;
+};
+
+const MobileVideoCard: FC<MobileVideoCardProps> = ({
   title,
   date,
   posterUrl,
   youtubeUrl,
   type,
-  colIndex = 0,
-  totalCols = 1
+  isExpanded,
+  onToggle,
+  colIndex,
 }) => {
-  const {
-    isExpanded,
-    videoId,
-    startHover,
-    endHover,
-    handleClick,
-    onPlayerReady,
-  } = useVideoCard({ youtubeUrl });
+  const videoId = extractYouTubeId(youtubeUrl);
+
+  const onPlayerReady = (event: YouTubeEvent) => {
+    if (isExpanded) {
+      event.target.playVideo();
+      event.target.mute();
+    }
+  };
 
   return (
     <CardContainer
       isExpanded={isExpanded}
+      onClick={onToggle}
       colIndex={colIndex}
-      totalCols={totalCols}
-      onMouseEnter={startHover}
-      onMouseLeave={endHover}
-      onClick={handleClick}
     >
       <TypeTag type={type}>{type === "movie" ? "영화" : "시리즈"}</TypeTag>
 
@@ -80,21 +83,11 @@ const VideoCard: FC<VideoCardProps> = ({
                   disablekb: 1,
                   iv_load_policy: 3,
                   fs: 0,
-                  showinfo: 0, // Legacy hint
-                  autohide: 1, // Legacy hint
                   origin: window.location.origin,
-                  vq: 'large', // Suggest 480p
+                  vq: 'large',
                 },
               }}
-              onReady={(event: YouTubeEvent) => {
-                onPlayerReady(event);
-                // Attempt to set quality directly through the API
-                try {
-                  event.target.setPlaybackQuality('large');
-                } catch (e) {
-                  // Quality settings may be restricted by the player
-                }
-              }}
+              onReady={onPlayerReady}
             />
           </VideoWrapper>
         )}
@@ -112,4 +105,4 @@ const VideoCard: FC<VideoCardProps> = ({
   );
 };
 
-export default VideoCard;
+export default MobileVideoCard;
