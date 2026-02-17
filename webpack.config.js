@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'docs'),
       filename: 'bundle.js',
-      publicPath: isProduction ? '/new-video/' : '/',
+      publicPath: 'auto',
       clean: true,
     },
     resolve: {
