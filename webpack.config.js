@@ -43,6 +43,7 @@ module.exports = (env, argv) => {
         exposes: {
           './App': './src/App',
           './LatestBanner': './src/exports/LatestBanner',
+          './MiniVideoWidget': './src/exports/MiniVideoWidget',
         },
         shared: {
           react: { singleton: true, requiredVersion: deps.react },
