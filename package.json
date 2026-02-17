@@ -1,6 +1,6 @@
 {
   "name": "new-video",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "homepage": "imspdr.github.io/new-video",
   "engines": {
     "node": ">=20.0.0"

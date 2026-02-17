@@ -27,8 +27,12 @@ const LatestBanner: React.FC = () => {
 
   const videoId = getVideoId(latestItem.youtube_url);
 
+  const handleClick = () => {
+    window.open('https://imspdr.github.io/new-video', '_blank');
+  };
+
   return (
-    <S.BannerContainer id="latest-promo-banner">
+    <S.BannerContainer id="latest-promo-banner" onClick={handleClick}>
       <S.FloatingTitle>
         <Typography variant="caption" color="primary.1" bold>
           {latestItem.type === 'movie' ? 'NEW MOVIE' : 'NEW SERIES'}
