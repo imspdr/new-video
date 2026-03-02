@@ -3,12 +3,15 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
+const { name: projectName } = require('./package.json');
 const deps = require('./package.json').dependencies;
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production' || process.env.NODE_ENV === 'production';
   const isWidgetTest = env && env.widgetTest;
+  const appBasename = isProduction ? `/${projectName}` : '/';
 
   return {
     entry: isWidgetTest ? './src/test-widgets.tsx' : './src/index.tsx',
@@ -16,7 +19,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'docs'),
       filename: 'bundle.js',
-      publicPath: 'auto',
+      publicPath: isProduction ? `https://imspdr.github.io/${projectName}/` : '/',
       clean: true,
     },
     resolve: {
@@ -37,6 +40,9 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env.BASENAME': JSON.stringify(appBasename),
+      }),
       new ModuleFederationPlugin({
         name: 'newvideo',
         filename: 'remoteEntry.js',

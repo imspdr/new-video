@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
 });
 
 const App: FC = () => {
-  const basename = process.env.NODE_ENV === "production" ? "/new-video" : "/";
+  const basename = process.env.BASENAME || "/";
 
   return (
     <QueryClientProvider client={queryClient}>
